@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<title>🎰 Slot Regno</title>
+<meta name="theme-color" content="#10233f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="icon" href="slot.png">
+<link rel="stylesheet" href="slot.css?v=7">
+</head>
+<body>
+
+<!-- ============================ TITOLO ============================ -->
+<div class="screen" id="scrTitolo">
+  <div class="titolo-box">
+    <img class="titolo-logo" src="slot.png" alt="">
+    <h1>SLOT REGNO</h1>
+    <p class="sottotitolo">Slot machine roguelite<br>24 round, 8 boss, un solo Bowser</p>
+    <button class="btn primary grande" id="btnNuova">NUOVA PARTITA</button>
+    <button class="btn grande hidden" id="btnContinua">CONTINUA</button>
+    <button class="btn ghost" id="btnAiuto">Come si gioca</button>
+  </div>
+</div>
+
+<!-- ============================= GIOCO ============================ -->
+<div class="screen hidden" id="scrGioco">
+
+  <header id="hud">
+    <div class="hud-top">
+      <button class="pill menu" id="btnMenu" aria-label="Menu">☰</button>
+      <div class="pill round">Round <b id="hudRound">1</b><span>/<i id="hudRoundTot">24</i></span></div>
+      <div class="pill tipo" id="hudTipo">Piccola</div>
+      <div class="pill gettoni">🎟️<b id="hudGettoni">0</b></div>
+    </div>
+    <div class="hud-bar">
+      <div class="stat cassa"><span>CASSA</span><b id="hudCassa">0</b></div>
+      <div class="prog"><div id="hudProg"></div></div>
+      <div class="stat obiettivo"><span>OBIETTIVO</span><b id="hudObiettivo">30</b></div>
+      <div class="stat giri"><span>GIRI</span><b id="hudGiri">9</b></div>
+    </div>
+  </header>
+
+  <div id="bossBanner" class="hidden"></div>
+
+  <div id="cimeliBar"></div>
+
+  <div id="machineWrap">
+    <div id="machine">
+      <div class="reel" data-i="0"><div class="strip"></div></div>
+      <div class="reel" data-i="1"><div class="strip"></div></div>
+      <div class="reel" data-i="2"><div class="strip"></div></div>
+      <img id="mask" src="img/maschera.png" alt="">
+    </div>
+  </div>
+
+  <div id="tabella"></div>
+
+  <div id="cellmods">
+    <button class="cellmod" data-i="0" aria-label="Modificatore casella 1"></button>
+    <button class="cellmod" data-i="1" aria-label="Modificatore casella 2"></button>
+    <button class="cellmod" data-i="2" aria-label="Modificatore casella 3"></button>
+  </div>
+
+  <div id="readout"><div class="ro-t"></div><div class="ro-s"></div></div>
+
+  <div id="riga-controlli">
+    <div id="luckyChip">
+      <div class="lk-t">LUCKY</div>
+      <div class="lk-box"><img id="luckyImg" alt=""><span class="lk-q">?</span></div>
+      <div class="lk-m" id="luckyMult">×2</div>
+    </div>
+    <div id="betBox">
+      <div class="bet-lbl">PUNTATA <i id="betTetto">max 5</i></div>
+      <div class="bet-riga">
+        <button class="bet-btn" id="betGiu" aria-label="Diminuisci puntata">−</button>
+        <div class="bet-val"><span id="betVal">1</span><em id="betCosto"></em></div>
+        <button class="bet-btn" id="betSu" aria-label="Aumenta puntata">+</button>
+      </div>
+      <button class="bet-max" id="betMax">MAX</button>
+    </div>
+  </div>
+
+  <button id="spinBtn">GIRA</button>
+
+  <div id="consBar"></div>
+</div>
+
+<div id="particelle"></div>
+
+<!-- =========================== OVERLAY ============================ -->
+<div class="overlay hidden" id="ovRound">
+  <div class="pannello">
+    <div id="ovRoundBody"></div>
+    <button class="btn primary grande" id="ovRoundGo">GIOCA</button>
+  </div>
+</div>
+
+<div class="overlay hidden" id="ovEsito">
+  <div class="pannello">
+    <div id="ovEsitoBody"></div>
+    <button class="btn primary grande" id="ovEsitoGo">AVANTI</button>
+  </div>
+</div>
+
+<div class="overlay hidden" id="ovVittoria">
+  <div class="pannello">
+    <div class="ov-title ok">🏆 HAI BATTUTO BOWSER!</div>
+    <p class="ov-testo">Il Regno dei Rulli è tuo. La run è vinta.<br><br>
+    Vuoi continuare in <b>modalità infinita</b>? I round non finiscono più, gli obiettivi
+    salgono senza pietà e arrivano i boss supremi con doppio malus.</p>
+    <button class="btn primary grande" id="ovVinciAvanti">MODALITÀ INFINITA</button>
+    <button class="btn ghost" id="ovVinciChiudi">Chiudi la run</button>
+  </div>
+</div>
+
+<div class="overlay hidden" id="ovNegozio">
+  <div class="pannello negozio">
+    <div class="neg-head">
+      <div class="neg-titolo">🛒 NEGOZIO</div>
+      <div class="neg-gettoni">🎟️ <b id="negGettoni">0</b></div>
+    </div>
+    <div id="negOfferte" class="offerte"></div>
+    <div class="neg-sez">Potenziamenti</div>
+    <div id="negPot" class="potenziamenti"></div>
+    <div class="neg-sez">I tuoi cimeli <i id="negInfo"></i></div>
+    <div id="negCimeli" class="cimeli-riga"></div>
+    <div class="neg-piede">
+      <button class="btn" id="negReroll">🔄 Cambia</button>
+      <button class="btn" id="negRulli">🎰 Rulli</button>
+      <button class="btn primary" id="negAvanti">AVANTI ▶</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay hidden" id="ovSel">
+  <div class="pannello">
+    <div class="sel-head"><span id="selTitolo"></span></div>
+    <div id="selBody"></div>
+    <button class="btn ghost" id="selAnnulla">Chiudi</button>
+  </div>
+</div>
+
+<div class="overlay hidden" id="ovAiuto">
+  <div class="pannello aiuto">
+    <div class="sel-head"><span>Come si gioca</span></div>
+    <div class="aiuto-corpo">
+      <h3>L'obiettivo</h3>
+      <p>Ogni round parti con un <b>fondo cassa</b> e un numero limitato di <b>giri</b>.
+      Devi portare la cassa fino all'<b>obiettivo</b>. Appena ci arrivi il round finisce
+      subito e i giri avanzati diventano gettoni.</p>
+
+      <h3>Il giro</h3>
+      <p>Premi <b>GIRA</b> per far partire i rulli, poi premi <b>FERMA</b> (o tocca la
+      macchina) per fermarli uno alla volta: conta il simbolo che si vede. Ogni giro ti
+      costa la <b>puntata</b>, che viene tolta dalla cassa.</p>
+
+      <h3>Quanto si vince</h3>
+      <table class="paytable">
+        <tr><th>Tris (3 uguali)</th><td>VAL = valore ×10 + 40 &nbsp;·&nbsp; MOLT 3<br><i>paga 15…36 volte la puntata</i></td></tr>
+        <tr><th>Coppia (2 uguali)</th><td>VAL = valore ×5 + 20 &nbsp;·&nbsp; MOLT 1<br><i>paga 2,5…6 volte la puntata</i></td></tr>
+        <tr><th>Niente</th><td>perdi la puntata</td></tr>
+        <tr><th>Lucky sulla linea</th><td>vincita ×2</td></tr>
+      </table>
+      <p class="formula">VINCITA = PUNTATA × VAL × MOLT ÷ 10</p>
+      <p>Cimeli e modificatori di casella alzano VAL e MOLT: è lì che si costruisce la
+      run. Ogni simbolo ha un <b>valore</b>: più è alto, più paga.</p>
+
+      <h3>Simboli</h3>
+      <div id="aiutoSimboli" class="aiuto-simboli"></div>
+
+      <h3>Negozio</h3>
+      <p>Fra un round e l'altro spendi i <b>gettoni</b> in cimeli (effetti permanenti),
+      modificatori da mettere su una delle tre caselle, consumabili, modifiche ai rulli
+      (aggiungi, togli, duplica o trasforma simboli) e potenziamenti come il
+      <b>tetto di puntata</b>.</p>
+
+      <h3>Boss</h3>
+      <p>Ogni terzo round è un boss con un malus. Al round 24 c'è <b>Bowser</b>:
+      battilo e la run è vinta. Dopo puoi continuare in modalità infinita.</p>
+    </div>
+    <button class="btn primary" id="aiutoChiudi">Ho capito</button>
+  </div>
+</div>
+
+<script src="slot-data.js?v=7"></script>
+<script src="slot.js?v=7"></script>
+<script>
+(function(){
+  var box = document.getElementById('aiutoSimboli');
+  if (!box) return;
+  SIMBOLI.slice().sort(function(a,b){return b.valore-a.valore;}).forEach(function(s){
+    var d = document.createElement('div');
+    d.className = 'as';
+    d.innerHTML = '<img src="'+s.img+'" alt=""><span>'+s.nome+'</span><b>'+s.valore+'</b>';
+    box.appendChild(d);
+  });
+})();
+</script>
+</body>
+</html>
